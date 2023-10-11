@@ -1,6 +1,9 @@
 package pro.sky.java.course2.homework261.employee;
 
 import org.springframework.stereotype.Service;
+import pro.sky.java.course2.homework261.exception.EmployeeAlreadyAddedException;
+import pro.sky.java.course2.homework261.exception.EmployeeNotFoundException;
+import pro.sky.java.course2.homework261.exception.EmployeeStoragelsFullException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +12,8 @@ import java.util.List;
 
 
 public class EmployeeService {
-    private final int number = 10;
-    private Employee employee;
+    private final int NUMBER = 10;
+
     List<Employee> employeeList = new ArrayList<>(List.of(
             new Employee("Иван", "Иванов"),
             new Employee("Петр", "Петров")
@@ -18,32 +21,43 @@ public class EmployeeService {
     ));
 
 
-    public EmployeeService(Employee employee) {
-        this.employee = employee;
-    }
-    //List<Employee> employeeList;
-    // public EmployeeService(List<Employee> employeeList) {
-    //    this.employeeList = employeeList;
-    // }
-
-    public String addEmployee(Employee employee) {
-        employeeList.add(employee);
-        return "Сотрудник добавлен";
-    }
-
-    public String removeEmployee(Employee employee) {
-        employeeList.remove(employee);
-        return "Сотрудник удален";
-    }
-
-    public String containsEmployee(Employee employee) {
+    public void addEmployee(Employee employee) {
         if (employeeList.contains(employee)) {
-            return "Сотрудник есть в списке";
+            throw new EmployeeAlreadyAddedException();
+        } else if (employeeList.size() < NUMBER) {
+            employeeList.add(employee);
+            // return "Сотрудник добавлен";
         } else {
-            return "Сотрудника нет в списке";
+            throw new EmployeeStoragelsFullException();
+        }
+    }
+
+    public void removeEmployee(Employee employee) {
+        if (!employeeList.contains(employee)) {
+            throw new EmployeeAlreadyAddedException();
+        } else {
+            employeeList.remove(employee);
+
+        }
+    }
+
+    public Employee containsEmployee(Employee employee) {
+        if (employeeList.contains(employee)) {
+            return employee;
+        } else {
+
+            throw new EmployeeNotFoundException();
+
         }
     }
 
 
+    public List<Employee> list() {
+        return employeeList;
+    }
 }
+
+
+
+
 
